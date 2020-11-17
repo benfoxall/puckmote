@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>A Remote Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <style>
         body {
             font-family: sans-serif;
@@ -12,19 +14,28 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+            padding: 0;
+            
         }
 
         button {
-            width: 50vw;
-            height: 50vh;
+            width: 10rem;
+            height: 10rem;
             font-family: sans-serif;
             font-size: 1.5em;
+            font-weight: 800;
+        }
+        small {
+            display: block;
         }
     </style>
 </head>
 
 <body>
     <h1>Remote control</h1>
+
     <button onclick="on()">On! <small>(or maybe off)</small></button>
     <script src="https://www.puck-js.com/puck.js"></script>
     <script>
