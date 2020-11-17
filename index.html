@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>A Remote Control</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #222;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button {
+            width: 50vw;
+            height: 50vh;
+            font-family: sans-serif;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Remote control</h1>
+    <button onclick="on()">On! <small>(or maybe off)</small></button>
+    <script src="https://www.puck-js.com/puck.js"></script>
+    <script>
+
+        /* Copyright (c) 2017 Gordon Williams, Pur3 Ltd. See the file LICENSE for copying permission. */
+        /* Pronto Hex decoder - http://www.espruino.com/pronto */
+        function pronto(d) {
+            var a = d.trim().split(" ").map(function (x) { return parseInt(x, 16); });
+            var freq = 4145146 / a[1];
+            return a.slice(4).map(function (x) {
+                return (1000 * x / freq).toFixed(1);
+            });
+        };
+
+        // we're doing the pronto-ing outside for now
+        const onOffHex = "0000 006C 0000 0022 00AD 00AD 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 06FB";
+        const onOffTimes = pronto(onOffHex);
+
+        function on() {
+            Puck.write(`
+                LED2.set();
+
+                Puck.IR([${onOffTimes.join(', ')}]);
+        
+                setTimeout(() => LED2.reset(), 1000)
+            `)
+        }
+
+    </script>
+
+</body>
+
+</html>
