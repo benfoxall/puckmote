@@ -1,0 +1,19 @@
+{
+  "name": "puckmote",
+  "version": "1.0.0",
+  "description": "A remote control for my TV",
+  "main": "puck.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benfoxall/puckmote.git"
+  },
+  "author": "Ben Foxall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benfoxall/puckmote/issues"
+  },
+  "homepage": "https://github.com/benfoxall/puckmote#readme"
+}
