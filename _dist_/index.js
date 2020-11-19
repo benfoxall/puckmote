@@ -4,6 +4,6 @@ import {App as App2} from "./App.js";
 render(/* @__PURE__ */ React.createElement(App2, null), document.querySelector("#root"));
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js");
+    navigator.serviceWorker.register("../sw.js");
   });
 }
