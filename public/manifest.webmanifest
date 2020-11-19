@@ -1,0 +1,15 @@
+{
+  "name": "Puckmote",
+  "short_name": "📺",
+  "start_url": ".",
+  "display": "fullscreen",
+  "background_color": "#3c3c3c",
+  "description": "A TV remote, in case your other one is out of battery.",
+  "icons": [
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
