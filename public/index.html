@@ -35,6 +35,14 @@
 
     <script src="https://www.puck-js.com/puck.js"></script>
     <script type="module" src="_dist_/index.js"></script>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("%PUBLIC_URL%sw.js");
+            });
+        }
+    </script>
 </body>
 
 </html>

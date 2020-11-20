@@ -3,5 +3,8 @@ module.exports = {
     public: "/",
     src: "/_dist_",
   },
-  plugins: ["@snowpack/plugin-react-refresh", "@snowpack/plugin-typescript"],
+  buildOptions: {
+    baseUrl: '/puckmote/'
+  },
+  plugins: ["@snowpack/plugin-react-refresh", "@snowpack/plugin-typescript", "@snowpack/plugin-dotenv"],
 };
