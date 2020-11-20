@@ -6,5 +6,5 @@ module.exports = {
   buildOptions: {
     baseUrl: '/puckmote/'
   },
-  plugins: ["@snowpack/plugin-react-refresh", "@snowpack/plugin-typescript", "@snowpack/plugin-dotenv"],
+  plugins: ["@snowpack/plugin-react-refresh", "@snowpack/plugin-typescript"],
 };
