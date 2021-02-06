@@ -19,13 +19,15 @@ export const App = () => {
 
   return (
     <>
-      <h1>Samsung</h1>
-
-      {Object.entries(SamsungTV).map(([name, prontoHex]) => (
-        <button key={name} onClick={() => run(prontoHex)}>
-          {name}
-        </button>
-      ))}
+      <h1 className="text-4xl p-4">Puckmote</h1>
+      <h1 className="text-2xl p-4">Samsung</h1>
+      <div className="flex flex-wrap p-4">
+        {Object.entries(SamsungTV).map(([name, prontoHex]) => (
+          <button key={name} onClick={() => run(prontoHex)} className="flex whitespace-nowrap items-center justify-center rounded-full bg-purple-700 hover:bg-red-700 text-white p-3 m-2 h-10 hover:bg-red-700">
+            {name}
+          </button>
+        ))}
+      </div>
     </>
   );
 };
