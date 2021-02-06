@@ -1,40 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>Puckmote</title>
-    <meta name="Description" content="A TV remote, in case your other one is out of battery.">
+    <meta
+      name="Description"
+      content="A TV remote, in case your other one is out of battery."
+    />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <link rel="manifest" href="/puckmote/manifest.webmanifest">
-    <link rel="apple-touch-icon" href="/puckmote/images/icon-512.png">
-    <link rel="stylesheet" href="style.css">
-    
-    <style>
-        body {
-            font-family: sans-serif;
-            background: #000;
-            color: #fff;
-        }
+    <link rel="manifest" href="/puckmote/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/puckmote/images/icon-512.png" />
+    <link rel="stylesheet" href="/puckmote/style.css" />
+  </head>
 
-    </style>
-</head>
-
-<body>
+  <body>
     <div id="root"></div>
 
     <script src="https://www.puck-js.com/puck.js"></script>
     <script type="module" src="/puckmote/_dist_/index.js"></script>
 
     <script>
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("/puckmote/sw.js");
-            });
-        }
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/puckmote/sw.js");
+        });
+      }
     </script>
-</body>
-
+  </body>
 </html>

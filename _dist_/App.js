@@ -13,14 +13,14 @@ export const App = () => {
     `);
   };
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h1", {
-    className: "text-4xl p-4"
+    className: "text-4xl m-4 text-gray-900 dark:text-white"
   }, "Puckmote"), /* @__PURE__ */ React.createElement("h1", {
-    className: "text-2xl p-4"
+    className: "text-2xl m-4"
   }, "Samsung"), /* @__PURE__ */ React.createElement("div", {
-    className: "flex flex-wrap p-4"
+    className: "flex flex-wrap m-2 max-w-4xl"
   }, Object.entries(SamsungTV).map(([name, prontoHex]) => /* @__PURE__ */ React.createElement("button", {
     key: name,
     onClick: () => run(prontoHex),
-    className: "flex whitespace-nowrap items-center justify-center rounded-full bg-purple-700 hover:bg-red-700 text-white p-3 m-2 h-10 hover:bg-red-700"
+    className: "flex whitespace-nowrap items-center justify-center rounded-full bg-blue-500 hover:bg-red-700 text-white p-3 m-2 h-10 hover:bg-blue-700 focus:bg-blue-700 transition-all "
   }, name))));
 };
