@@ -12,8 +12,15 @@ export const App = () => {
         setTimeout(() => LED2.reset(), 100)
     `);
   };
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h1", null, "Samsung"), Object.entries(SamsungTV).map(([name, prontoHex]) => /* @__PURE__ */ React.createElement("button", {
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h1", {
+    className: "text-4xl p-4"
+  }, "Puckmote"), /* @__PURE__ */ React.createElement("h1", {
+    className: "text-2xl p-4"
+  }, "Samsung"), /* @__PURE__ */ React.createElement("div", {
+    className: "flex flex-wrap p-4"
+  }, Object.entries(SamsungTV).map(([name, prontoHex]) => /* @__PURE__ */ React.createElement("button", {
     key: name,
-    onClick: () => run(prontoHex)
-  }, name)));
+    onClick: () => run(prontoHex),
+    className: "flex whitespace-nowrap items-center justify-center rounded-full bg-purple-700 hover:bg-red-700 text-white p-3 m-2 h-10 hover:bg-red-700"
+  }, name))));
 };
