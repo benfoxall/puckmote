@@ -40,21 +40,8 @@ Or more advanced usage with control of the connection
   });
 
 */
-(function (root, factory) {
-  if (typeof define === "function" && define.amd) {
-    // AMD. Register as an anonymous module.
-    define([], factory);
-  } else if (typeof module === "object" && module.exports) {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory();
-  } else {
-    // Browser globals (root is window)
-    root.Puck = factory();
-  }
-})(typeof self !== "undefined" ? self : this, function () {
-  if (typeof navigator == "undefined") return;
+
+  if (typeof navigator == "undefined") throw new Error("Navigator needed");
 
   var isBusy;
   var queue = [];
@@ -415,7 +402,7 @@ Or more advanced usage with control of the connection
 
   // ----------------------------------------------------------
 
-  var puck = {
+  const puck = {
     /// Are we writing debug information? 0 is no, 1 is some, 2 is more, 3 is all.
     debug: 1,
     /// Should we use flow control? Default is true
@@ -502,5 +489,5 @@ Or more advanced usage with control of the connection
       document.body.appendChild(e);
     },
   };
-  return puck;
-});
+
+export default puck;
