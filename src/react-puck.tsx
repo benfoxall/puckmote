@@ -83,14 +83,14 @@ export const usePuckRepl = () => {
 export const PuckStatus = () => {
 
   const prog = useWriteProgress()
-  const { start, stop, repl } = useContext(PuckContext);
+  const { stop, repl } = useContext(PuckContext);
 
-  return <div className="flex float-right">
-    {prog && <div className="m-4">
-      {prog.value} / {prog.total}
-    </div>}
+  return <div className="flex">
+    <div className="flex-grow">
+      {prog && <progress value={prog.value} max={prog.total} />}
+    </div>
     {repl &&
-      <button className="p-4 m-2 bg-blue-500 rounded-full" onClick={stop}>Stop</button>
+      <button className="px-4 m-2 bg-blue-500 rounded-full" onClick={stop}>Disconnect</button>
     }
   </div>
 }

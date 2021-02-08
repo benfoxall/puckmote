@@ -23,8 +23,8 @@ const Wrapped = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-xl p-8 bg-gray-200">
-      <div className="m-4 float-righxt">
+    <div className="container mx-auto max-w-md p-8 m-8 bg-gray-200 shadow-2xl rounded">
+      <div className="m-4">
         <PuckStatus />
       </div>
       <h1 className="text-4xl m-4">Puckmote</h1>
