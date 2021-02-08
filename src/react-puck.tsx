@@ -85,12 +85,12 @@ export const PuckStatus = () => {
   const prog = useWriteProgress()
   const { start, stop, repl } = useContext(PuckContext);
 
-  return <div className="bg-red-100 flex float-right">
-    {repl &&
-      <button className="p-4 m-2 bg-blue-100 rounded-full" onClick={stop}>Stop</button>
-    }
+  return <div className="flex float-right">
     {prog && <div className="m-4">
       {prog.value} / {prog.total}
     </div>}
+    {repl &&
+      <button className="p-4 m-2 bg-blue-500 rounded-full" onClick={stop}>Stop</button>
+    }
   </div>
 }
