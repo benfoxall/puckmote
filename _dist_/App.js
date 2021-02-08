@@ -16,9 +16,9 @@ const Wrapped = () => {
     `);
   };
   return /* @__PURE__ */ React.createElement("div", {
-    className: "container mx-auto max-w-xl p-8 bg-gray-200"
+    className: "container mx-auto max-w-md p-8 m-8 bg-gray-200 shadow-2xl rounded"
   }, /* @__PURE__ */ React.createElement("div", {
-    className: "m-4 float-righxt"
+    className: "m-4"
   }, /* @__PURE__ */ React.createElement(PuckStatus, null)), /* @__PURE__ */ React.createElement("h1", {
     className: "text-4xl m-4"
   }, "Puckmote"), /* @__PURE__ */ React.createElement("h1", {

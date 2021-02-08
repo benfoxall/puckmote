@@ -56,13 +56,16 @@ export const usePuckRepl = () => {
 };
 export const PuckStatus = () => {
   const prog = useWriteProgress();
-  const {start, stop, repl} = useContext(PuckContext);
+  const {stop, repl} = useContext(PuckContext);
   return /* @__PURE__ */ React.createElement("div", {
-    className: "flex float-right"
-  }, prog && /* @__PURE__ */ React.createElement("div", {
-    className: "m-4"
-  }, prog.value, " / ", prog.total), repl && /* @__PURE__ */ React.createElement("button", {
-    className: "p-4 m-2 bg-blue-500 rounded-full",
+    className: "flex"
+  }, /* @__PURE__ */ React.createElement("div", {
+    className: "flex-grow"
+  }, prog && /* @__PURE__ */ React.createElement("progress", {
+    value: prog.value,
+    max: prog.total
+  })), repl && /* @__PURE__ */ React.createElement("button", {
+    className: "px-4 m-2 bg-blue-500 rounded-full",
     onClick: stop
-  }, "Stop"));
+  }, "Disconnect"));
 };
