@@ -86,6 +86,8 @@ export class PuckREPL {
     reset();
     echo(0);
 
+    LED3.set();
+
     function reply(ob) {
       Bluetooth.println(
         btoa(JSON.stringify(ob))
@@ -107,6 +109,8 @@ export class PuckREPL {
         reply({id: id, reject: err});
       }
     }
+
+    LED3.reset();
   `];
 
   constructor() {
@@ -138,10 +142,10 @@ export class PuckREPL {
 
       const resolver = this.resolvers.get(res.id);
 
-      if (res.resolve) {
-        resolver.resolve(res.resolve)
+      if (res.reject) {
+        resolver.reject(res.reject)
       } else {
-        resolver.reject(res.reject || '???')
+        resolver.resolve(res.resolve)
       }
 
       this.resolvers.delete(res.id);
@@ -164,10 +168,20 @@ export class PuckREPL {
     if (this.queue) {
       this.queue.push(command)
     } else {
-      this.socket.send(command)
+      if (this.socket.state === State.OPEN) {
+        this.socket.send(command)
+      } else {
+        throw new Error("Puck not in open state")
+      }
+
     }
 
     return defer.promise
+  }
+
+  close() {
+    if (this.socket)
+      this.socket.close()
   }
 }
 
