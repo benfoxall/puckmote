@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Puckmote</title>
-    <meta
-      name="Description"
-      content="A TV remote, in case your other one is out of battery."
-    />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <link rel="manifest" href="%PUBLIC_URL%manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%images/icon-512.png" />
-    <link rel="stylesheet" href="%PUBLIC_URL%style.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <title>Puckmote</title>
+  <meta name="Description" content="A TV remote, in case your other one is out of battery." />
 
-  <body class="bg-gray-700">
-    <div id="root"></div>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="%PUBLIC_URL%manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%images/icon-512.png" />
+  <link rel="stylesheet" href="%PUBLIC_URL%style.css" />
+</head>
 
-    <script type="module" src="%PUBLIC_URL%_dist_/index.js"></script>
+<body class="bg-gray-100 dark:bg-gray-900 dark:text-gray-200">
+  <div id="root"></div>
 
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("%PUBLIC_URL%sw.js");
-        });
-      }
-    </script>
-  </body>
+  <script type="module" src="%PUBLIC_URL%_dist_/index.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("%PUBLIC_URL%sw.js");
+      });
+    }
+  </script>
+</body>
+
 </html>
