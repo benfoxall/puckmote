@@ -10,7 +10,7 @@ var Module = {
   onRuntimeInitialized,
   locateFile() {
     // Hack because snowpack isn't handling basePath
-    return 'https://benjaminbenben.com/puckmote/_dist_/wasm/EncodeIR.wasm'
+    return 'https://benjaminbenben.com/puckmote/EncodeIR.wasm'
   }
 }
 
@@ -102,163 +102,72 @@ var read_,
 var nodeFS;
 var nodePath;
 
-if (ENVIRONMENT_IS_NODE) {
-  if (ENVIRONMENT_IS_WORKER) {
-    scriptDirectory = require('path').dirname(scriptDirectory) + '/';
+
+// Note that this includes Node.js workers when relevant (pthreads is enabled).
+// Node.js workers are detected as a combination of ENVIRONMENT_IS_WORKER and
+// ENVIRONMENT_IS_NODE.
+if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
+  if (ENVIRONMENT_IS_WORKER) { // Check worker, not web, since window could be polyfilled
+    scriptDirectory = self.location.href;
+  } else if (typeof document !== 'undefined' && document.currentScript) { // web
+    scriptDirectory = document.currentScript.src;
+  }
+  // blob urls look like blob:http://site.com/etc/etc and we cannot infer anything from them.
+  // otherwise, slice off the final part of the url to find the script directory.
+  // if scriptDirectory does not contain a slash, lastIndexOf will return -1,
+  // and scriptDirectory will correctly be replaced with an empty string.
+  if (scriptDirectory.indexOf('blob:') !== 0) {
+    scriptDirectory = scriptDirectory.substr(0, scriptDirectory.lastIndexOf('/') + 1);
   } else {
-    scriptDirectory = __dirname + '/';
+    scriptDirectory = '';
   }
 
-  // include: node_shell_read.js
+  // Differentiate the Web Worker from the Node Worker case, as reading must
+  // be done differently.
+  {
+
+    // include: web_or_worker_shell_read.js
 
 
-  read_ = function shell_read(filename, binary) {
-    if (!nodeFS) nodeFS = require('fs');
-    if (!nodePath) nodePath = require('path');
-    filename = nodePath['normalize'](filename);
-    return nodeFS['readFileSync'](filename, binary ? null : 'utf8');
-  };
-
-  readBinary = function readBinary(filename) {
-    var ret = read_(filename, true);
-    if (!ret.buffer) {
-      ret = new Uint8Array(ret);
-    }
-    assert(ret.buffer);
-    return ret;
-  };
-
-  // end include: node_shell_read.js
-  if (process['argv'].length > 1) {
-    thisProgram = process['argv'][1].replace(/\\/g, '/');
-  }
-
-  arguments_ = process['argv'].slice(2);
-
-  if (typeof module !== 'undefined') {
-    module['exports'] = Module;
-  }
-
-  process['on']('uncaughtException', function (ex) {
-    // suppress ExitStatus exceptions from showing an error
-    if (!(ex instanceof ExitStatus)) {
-      throw ex;
-    }
-  });
-
-  process['on']('unhandledRejection', abort);
-
-  quit_ = function (status) {
-    process['exit'](status);
-  };
-
-  Module['inspect'] = function () { return '[Emscripten Module object]'; };
-
-} else
-  if (ENVIRONMENT_IS_SHELL) {
-
-    if (typeof read != 'undefined') {
-      read_ = function shell_read(f) {
-        return read(f);
-      };
-    }
-
-    readBinary = function readBinary(f) {
-      var data;
-      if (typeof readbuffer === 'function') {
-        return new Uint8Array(readbuffer(f));
-      }
-      data = read(f, 'binary');
-      assert(typeof data === 'object');
-      return data;
+    read_ = function (url) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, false);
+      xhr.send(null);
+      return xhr.responseText;
     };
 
-    if (typeof scriptArgs != 'undefined') {
-      arguments_ = scriptArgs;
-    } else if (typeof arguments != 'undefined') {
-      arguments_ = arguments;
-    }
-
-    if (typeof quit === 'function') {
-      quit_ = function (status) {
-        quit(status);
+    if (ENVIRONMENT_IS_WORKER) {
+      readBinary = function (url) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, false);
+        xhr.responseType = 'arraybuffer';
+        xhr.send(null);
+        return new Uint8Array(/** @type{!ArrayBuffer} */(xhr.response));
       };
     }
 
-    if (typeof print !== 'undefined') {
-      // Prefer to use print/printErr where they exist, as they usually work better.
-      if (typeof console === 'undefined') console = /** @type{!Console} */({});
-      console.log = /** @type{!function(this:Console, ...*): undefined} */ (print);
-      console.warn = console.error = /** @type{!function(this:Console, ...*): undefined} */ (typeof printErr !== 'undefined' ? printErr : print);
-    }
-
-  } else
-
-    // Note that this includes Node.js workers when relevant (pthreads is enabled).
-    // Node.js workers are detected as a combination of ENVIRONMENT_IS_WORKER and
-    // ENVIRONMENT_IS_NODE.
-    if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
-      if (ENVIRONMENT_IS_WORKER) { // Check worker, not web, since window could be polyfilled
-        scriptDirectory = self.location.href;
-      } else if (typeof document !== 'undefined' && document.currentScript) { // web
-        scriptDirectory = document.currentScript.src;
-      }
-      // blob urls look like blob:http://site.com/etc/etc and we cannot infer anything from them.
-      // otherwise, slice off the final part of the url to find the script directory.
-      // if scriptDirectory does not contain a slash, lastIndexOf will return -1,
-      // and scriptDirectory will correctly be replaced with an empty string.
-      if (scriptDirectory.indexOf('blob:') !== 0) {
-        scriptDirectory = scriptDirectory.substr(0, scriptDirectory.lastIndexOf('/') + 1);
-      } else {
-        scriptDirectory = '';
-      }
-
-      // Differentiate the Web Worker from the Node Worker case, as reading must
-      // be done differently.
-      {
-
-        // include: web_or_worker_shell_read.js
-
-
-        read_ = function (url) {
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', url, false);
-          xhr.send(null);
-          return xhr.responseText;
-        };
-
-        if (ENVIRONMENT_IS_WORKER) {
-          readBinary = function (url) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, false);
-            xhr.responseType = 'arraybuffer';
-            xhr.send(null);
-            return new Uint8Array(/** @type{!ArrayBuffer} */(xhr.response));
-          };
+    readAsync = function (url, onload, onerror) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onload = function () {
+        if (xhr.status == 200 || (xhr.status == 0 && xhr.response)) { // file URLs can return 0
+          onload(xhr.response);
+          return;
         }
+        onerror();
+      };
+      xhr.onerror = onerror;
+      xhr.send(null);
+    };
 
-        readAsync = function (url, onload, onerror) {
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', url, true);
-          xhr.responseType = 'arraybuffer';
-          xhr.onload = function () {
-            if (xhr.status == 200 || (xhr.status == 0 && xhr.response)) { // file URLs can return 0
-              onload(xhr.response);
-              return;
-            }
-            onerror();
-          };
-          xhr.onerror = onerror;
-          xhr.send(null);
-        };
+    // end include: web_or_worker_shell_read.js
+  }
 
-        // end include: web_or_worker_shell_read.js
-      }
-
-      setWindowTitle = function (title) { document.title = title };
-    } else {
-      throw new Error('environment detection error');
-    }
+  setWindowTitle = function (title) { document.title = title };
+} else {
+  throw new Error('environment detection error');
+}
 
 // Set up the out() and err() hooks, which are how we can print to stdout or
 // stderr, respectively.

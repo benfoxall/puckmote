@@ -18,7 +18,7 @@ export const App = () => {
   const changeType: ChangeEventHandler<HTMLSelectElement> = (e) =>
     setType(e.target.value);
 
-  const devices = types?.[type];
+  const devices = types && types[type];
 
   const submit = (e) => {
     e.preventDefault();
@@ -109,21 +109,22 @@ export const App = () => {
       )}
 
       <ul>
-        {devices?.map(([dev, subdev], i) => (
-          <li key={i}>
-            <div className="mx-2 mt-8 p-2 rounded text-right opacity-20">
-              {dev} | {subdev}
-            </div>
-            <div className="dark:bg-gray-800 bg-white p-2 rounded">
-              <Device
-                manufacturer={manufacturer}
-                devicetype={type}
-                device={dev}
-                subdevice={subdev}
-              />
-            </div>
-          </li>
-        ))}
+        {devices &&
+          devices.map(([dev, subdev], i) => (
+            <li key={i}>
+              <div className="mx-2 mt-8 p-2 rounded text-right opacity-20">
+                {dev} | {subdev}
+              </div>
+              <div className="dark:bg-gray-800 bg-white p-2 rounded">
+                <Device
+                  manufacturer={manufacturer}
+                  devicetype={type}
+                  device={dev}
+                  subdevice={subdev}
+                />
+              </div>
+            </li>
+          ))}
       </ul>
     </form>
   );
@@ -135,15 +136,15 @@ const Device: FC<{
   device: string;
   subdevice: string;
 }> = ({ manufacturer, devicetype, device, subdevice }) => {
-  const butts = useAsync(
+  const funtions = useAsync(
     () => fetchFunctions(manufacturer, devicetype, device, subdevice),
     [manufacturer, devicetype, device, subdevice]
   );
 
-  if (butts) {
+  if (funtions) {
     return (
       <nav className="flex flex-wrap">
-        {butts.map((row, i) => (
+        {funtions.map((row, i) => (
           <Button key={i} {...row} />
         ))}
       </nav>

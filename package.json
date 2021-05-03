@@ -2,7 +2,6 @@
   "name": "puckmote",
   "version": "1.0.0",
   "description": "A remote control for my TV",
-  "main": "puck.js",
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build && workbox generateSW workbox-config.js"
@@ -27,6 +26,7 @@
     "@snowpack/plugin-postcss": "^1.2.2",
     "@snowpack/plugin-react-refresh": "^2.5.0",
     "@snowpack/plugin-typescript": "^1.2.1",
+    "@snowpack/plugin-webpack": "^2.3.1",
     "@types/papaparse": "^5.2.5",
     "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.3",
