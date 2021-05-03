@@ -17,26 +17,38 @@ export const App = () => {
   return /* @__PURE__ */ React.createElement("form", {
     className: "m-5 font-mono",
     onSubmit: submit
-  }, /* @__PURE__ */ React.createElement("select", {
-    className: "bg-gray-800 m-2 p-2 rounded",
+  }, /* @__PURE__ */ React.createElement("h1", {
+    className: "text-4xl"
+  }, "Puckmote "), /* @__PURE__ */ React.createElement("p", null, "Universal IR control for", " ", /* @__PURE__ */ React.createElement("a", {
+    className: "text-blue-500 hover:underline",
+    href: "https://www.espruino.com/"
+  }, "Espruino")), /* @__PURE__ */ React.createElement("p", null, "Using data from", " ", /* @__PURE__ */ React.createElement("a", {
+    className: "text-blue-500 hover:underline",
+    href: "https://github.com/probonopd/irdb"
+  }, "irdb")), /* @__PURE__ */ React.createElement("label", {
+    className: "my-5 block"
+  }, /* @__PURE__ */ React.createElement("div", null, "Manufacturer"), /* @__PURE__ */ React.createElement("select", {
+    className: "dark:bg-gray-800 p-2 rounded",
     onChange: changeManufacturer,
     name: "m",
     value: manufacturer
-  }, /* @__PURE__ */ React.createElement("option", null, "\u2026"), Object.keys(manufacturers).map((name) => /* @__PURE__ */ React.createElement("option", {
+  }, /* @__PURE__ */ React.createElement("option", null), Object.keys(manufacturers).map((name) => /* @__PURE__ */ React.createElement("option", {
     key: name
-  }, name))), types && /* @__PURE__ */ React.createElement("select", {
-    className: "bg-gray-800 m-2 p-2 rounded block",
+  }, name)))), types && /* @__PURE__ */ React.createElement("label", {
+    className: "my-5 block"
+  }, /* @__PURE__ */ React.createElement("div", null, "Device Type"), /* @__PURE__ */ React.createElement("select", {
+    className: "dark:bg-gray-800 p-2 rounded block",
     onChange: changeType,
     name: "t",
     value: type
-  }, /* @__PURE__ */ React.createElement("option", null, "\u2026"), Object.keys(types).map((name) => /* @__PURE__ */ React.createElement("option", {
+  }, /* @__PURE__ */ React.createElement("option", null), Object.keys(types).map((name) => /* @__PURE__ */ React.createElement("option", {
     key: name
-  }, name))), /* @__PURE__ */ React.createElement("ul", null, devices?.map(([dev, subdev], i) => /* @__PURE__ */ React.createElement("li", {
+  }, name)))), /* @__PURE__ */ React.createElement("ul", null, devices?.map(([dev, subdev], i) => /* @__PURE__ */ React.createElement("li", {
     key: i
   }, /* @__PURE__ */ React.createElement("div", {
     className: "mx-2 mt-8 p-2 rounded text-right opacity-20"
   }, dev, " | ", subdev), /* @__PURE__ */ React.createElement("div", {
-    className: "bg-gray-800 p-2 rounded"
+    className: "dark:bg-gray-800 bg-white p-2 rounded"
   }, /* @__PURE__ */ React.createElement(Device, {
     manufacturer,
     devicetype: type,
@@ -58,7 +70,7 @@ const Device = ({manufacturer, devicetype, device, subdevice}) => {
       ...row
     })));
   } else {
-    return /* @__PURE__ */ React.createElement("p", null, "data");
+    return /* @__PURE__ */ React.createElement("p", null, "\u2013");
   }
 };
 const Button = (props) => {
@@ -74,7 +86,7 @@ const Button = (props) => {
     setActive(false);
   };
   return /* @__PURE__ */ React.createElement("button", {
-    className: "m-2 p-2 rounded shadow transition-colors " + (active ? "bg-blue-500" : "bg-gray-900 hover:bg-black focus:bg-black focus:text-pink-500 hover:text-pink-500 focus:text-pink-500"),
+    className: "m-2 p-2 text-white rounded shadow transition-colors " + (active ? "bg-blue-500" : "bg-gray-900 hover:bg-black focus:bg-black focus:text-pink-500 hover:text-pink-500 focus:text-pink-500"),
     type: "button",
     onClick: click
   }, props.functionname);
