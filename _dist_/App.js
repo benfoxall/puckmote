@@ -14,6 +14,26 @@ export const App = () => {
     e.preventDefault();
     console.log("submit");
   };
+  useEffect(() => {
+    const current = new URLSearchParams(location.search);
+    if (current.has("m")) {
+      setManufacturer(current.get("m"));
+    }
+    if (current.has("t")) {
+      setType(current.get("t"));
+    }
+  }, []);
+  useEffect(() => {
+    let params = new URLSearchParams();
+    if (manufacturer) {
+      params.set("m", manufacturer);
+    }
+    if (type) {
+      params.set("t", type);
+    }
+    const q = params.toString();
+    history.pushState({manufacturer, type}, `${manufacturer} / ${type}`, q.length ? `?${q}` : ".");
+  }, [manufacturer, type]);
   return /* @__PURE__ */ React.createElement("form", {
     className: "m-5 font-mono",
     onSubmit: submit
@@ -22,7 +42,7 @@ export const App = () => {
   }, "Puckmote "), /* @__PURE__ */ React.createElement("p", null, "Universal IR control for", " ", /* @__PURE__ */ React.createElement("a", {
     className: "text-blue-500 hover:underline",
     href: "https://www.espruino.com/"
-  }, "Espruino")), /* @__PURE__ */ React.createElement("p", null, "Using data from", " ", /* @__PURE__ */ React.createElement("a", {
+  }, "Espruino")), /* @__PURE__ */ React.createElement("p", null, "With codes from", " ", /* @__PURE__ */ React.createElement("a", {
     className: "text-blue-500 hover:underline",
     href: "https://github.com/probonopd/irdb"
   }, "irdb")), /* @__PURE__ */ React.createElement("label", {
