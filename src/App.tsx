@@ -1,10 +1,4 @@
-import React, {
-  ChangeEventHandler,
-  FC,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEventHandler, FC, useEffect, useState } from "react";
 import { PuckProvider, PuckStatus, usePuckRepl } from "./react-puck";
 
 import { SamsungTV } from "./data";
@@ -56,6 +50,9 @@ export const AppV1 = () => (
   </PuckProvider>
 );
 
+import { EncodeIR } from "./wasm/EncodeIR";
+EncodeIR("NECx1", 0, 191, 3).then(console.log);
+
 export const AppV2 = () => {
   const manufacturers = useIRDBData();
   const [manufacturer, setManufacturer] = useState<string>();
@@ -69,14 +66,17 @@ export const AppV2 = () => {
 
   const devices = types?.[type];
 
-  const submit = (e) => e.preventDefault();
+  const submit = (e) => {
+    e.preventDefault();
+    console.log("submit");
+  };
 
   return (
     <form className="m-5 font-mono" onSubmit={submit}>
       <select
         className="bg-gray-800 m-2 p-2 rounded"
         onChange={changeManufacturer}
-        name="manufacturer"
+        name="m"
         value={manufacturer}
       >
         <option>…</option>
@@ -89,7 +89,7 @@ export const AppV2 = () => {
         <select
           className="bg-gray-800 m-2 p-2 rounded block"
           onChange={changeType}
-          name="deviceType"
+          name="t"
           value={type}
         >
           <option>…</option>
@@ -138,9 +138,20 @@ const Device: FC<{
       <nav className="flex flex-wrap">
         {butts.map((row, i) => (
           <button
-            className="m-2 p-2 bg-gray-900 rounded shadow hover:text-pink-500 focus:text-pink-500"
             key={i}
+            className="m-2 p-2 bg-gray-900 rounded shadow hover:text-pink-500 focus:text-pink-500 hover:bg-black focus:bg-black"
             type="button"
+            onClick={() => {
+              console.log("TODO: ", row);
+
+              // D, S, F
+              EncodeIR(
+                row.protocol,
+                parseInt(row.device, 10),
+                parseInt(row.subdevice, 10),
+                parseInt(row.function, 10)
+              ).then(console.log);
+            }}
           >
             {row.functionname}
           </button>
