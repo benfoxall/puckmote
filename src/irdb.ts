@@ -77,23 +77,4 @@ export const fetchIRDBDevice = async (
       },
     });
   });
-
-  // const res = await fetch(ENDPOINT + path)
-  // const text = await res.text()
-
-  // const data: IIRDBDATA = {}
-
-  // for (const line of text.split("\n")) {
-  //   const match = line.match(re) as REGroups
-  //   if (match) {
-  //     const device = match.groups;
-
-  //     const man = data[device.manufacturer] ||= {}
-  //     const dev = man[device.devicetype] ||= []
-  //     dev.push([device.device, device.subdevice])
-
-  //   }
-  // }
-
-  // return data;
 };
