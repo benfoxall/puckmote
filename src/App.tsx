@@ -1,12 +1,14 @@
 import React, { ChangeEventHandler, FC, useEffect, useState } from "react";
 
-import { CSVRow, fetchIRDBDevice, useIRDBData } from "./irdb";
+import { IFunction, fetchFunctions, useAsync, fetchIndex } from "./irdb";
 import { EncodeIR } from "./wasm/EncodeIR";
 
 const Puck = (window as any).Puck;
+Puck.debug = 3;
 
 export const App = () => {
-  const manufacturers = useIRDBData();
+  const manufacturers = useAsync(fetchIndex, []) || {};
+
   const [manufacturer, setManufacturer] = useState<string>();
   const changeManufacturer: ChangeEventHandler<HTMLSelectElement> = (e) =>
     setManufacturer(e.target.value);
@@ -133,12 +135,10 @@ const Device: FC<{
   device: string;
   subdevice: string;
 }> = ({ manufacturer, devicetype, device, subdevice }) => {
-  const [butts, setButts] = useState<CSVRow[]>();
-
-  useEffect(() => {
-    setButts([]);
-    fetchIRDBDevice(manufacturer, devicetype, device, subdevice).then(setButts);
-  }, [manufacturer, devicetype, device, subdevice]);
+  const butts = useAsync(
+    () => fetchFunctions(manufacturer, devicetype, device, subdevice),
+    [manufacturer, devicetype, device, subdevice]
+  );
 
   if (butts) {
     return (
@@ -153,9 +153,9 @@ const Device: FC<{
   }
 };
 
-let last: CSVRow = null;
+let last: IFunction = null;
 
-const Button: FC<CSVRow> = (props) => {
+const Button: FC<IFunction> = (props) => {
   const [active, setActive] = useState(false);
 
   const click = async () => {

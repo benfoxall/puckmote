@@ -1,74 +1,54 @@
-import { useEffect, useState } from "react";
+import { DependencyList, useEffect, useState } from "react";
 import Papa from "papaparse";
 
 const ENDPOINT = "https://cdn.jsdelivr.net/gh/probonopd/irdb@master/codes/";
 
-const re = /^(?<manufacturer>.+)\/(?<devicetype>.+)\/(?<device>.+),(?<subdevice>.+)\.csv$/;
+const indexRE = /^(.+)\/(.+)\/(.+),(.+)\.csv$/;
 
-interface REGroups extends RegExpMatchArray {
-  groups: {
-    manufacturer: string;
-    devicetype: string;
-    device: string;
-    subdevice: string;
-  };
-}
-
-type IIRDBDATA = {
+interface IIndex {
   [manufacturer: string]: {
     [devicetype: string]: [device: string, subdevice: string][];
   };
-};
+}
 
-const fetchIRDBIndex = async () => {
+export interface IFunction {
+  functionname: string;
+  protocol: string;
+  device: string;
+  subdevice: string;
+  function: string;
+}
+
+export const fetchIndex = async () => {
   const res = await fetch(ENDPOINT + "index");
   const text = await res.text();
 
-  const data: IIRDBDATA = {};
+  const accumulate: IIndex = {};
 
   for (const line of text.split("\n")) {
-    const match = line.match(re) as REGroups;
+    const match = line.match(indexRE);
     if (match) {
-      const device = match.groups;
+      const [, manufacturer, devicetype, device, subdevice] = match;
 
-      const man = (data[device.manufacturer] ||= {});
-      const dev = (man[device.devicetype] ||= []);
-      dev.push([device.device, device.subdevice]);
+      const man = (accumulate[manufacturer] ||= {});
+      const dev = (man[devicetype] ||= []);
+      dev.push([device, subdevice]);
     }
   }
 
-  return data;
+  return accumulate;
 };
 
-export const useIRDBData = () => {
-  const [data, setData] = useState<IIRDBDATA>({});
-
-  useEffect(() => {
-    fetchIRDBIndex().then(setData);
-  }, []);
-
-  return data;
-};
-
-// INPUT SOURCE,NECx2,7,7,1
-export interface CSVRow {
-  device: string;
-  function: string;
-  functionname: string;
-  protocol: string;
-  subdevice: string;
-}
-
-export const fetchIRDBDevice = async (
+export const fetchFunctions = async (
   manufacturer: string,
   devicetype: string,
   device: string,
   subdevice: string
-): Promise<CSVRow[]> => {
+): Promise<IFunction[]> => {
   const path = `${ENDPOINT}${manufacturer}/${devicetype}/${device},${subdevice}.csv`;
 
   return new Promise((resolve) => {
-    Papa.parse<CSVRow>(path, {
+    Papa.parse<IFunction>(path, {
       download: true,
       header: true,
       skipEmptyLines: true,
@@ -78,3 +58,19 @@ export const fetchIRDBDevice = async (
     });
   });
 };
+
+export function useAsync<T>(fn: () => Promise<T>, deps: DependencyList = []) {
+  const [state, setState] = useState<T | null>(null);
+
+  useEffect(() => {
+    setState(null);
+
+    let live = true;
+
+    fn().then((v) => live && setState(v));
+
+    return () => void (live = false);
+  }, deps);
+
+  return state;
+}
