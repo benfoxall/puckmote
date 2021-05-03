@@ -2,10 +2,16 @@
 let onRuntimeInitialized;
 const ready = new Promise(resolve => onRuntimeInitialized = resolve)
 
+// import wasmpath from './EncodeIR.wasm'
+
 let printer = () => { }
 var Module = {
   print(val) { printer(val) },
-  onRuntimeInitialized
+  onRuntimeInitialized,
+  locateFile() {
+    // Hack because snowpack isn't handling basePath
+    return 'https://benjaminbenben.com/puckmote/_dist_/wasm/EncodeIR.wasm'
+  }
 }
 
 export const EncodeIR = async (protocol, D, S, F) => {
@@ -1529,12 +1535,11 @@ function createExportWrapper(name, fixedasm) {
   };
 }
 
-// use import
-import wasmBinaryFile from './EncodeIR.wasm'
-// var wasmBinaryFile = 'EncodeIR.wasm';
-// if (!isDataURI(wasmBinaryFile)) {
-//   wasmBinaryFile = locateFile(wasmBinaryFile);
-// }
+
+var wasmBinaryFile = 'EncodeIR.wasm';
+if (!isDataURI(wasmBinaryFile)) {
+  wasmBinaryFile = locateFile(wasmBinaryFile);
+}
 
 function getBinary(file) {
   try {
