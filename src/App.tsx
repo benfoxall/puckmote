@@ -4,6 +4,7 @@ import { PuckProvider, PuckStatus, usePuckRepl } from "./react-puck";
 import { SamsungTV } from "./data";
 import { CSVRow, fetchIRDBDevice, useIRDBData } from "./irdb";
 import { pronto } from "./lib/pronto";
+import { EncodeIR } from "./wasm/EncodeIR";
 
 const Wrapped = () => {
   const repl = usePuckRepl();
@@ -49,9 +50,6 @@ export const AppV1 = () => (
     <Wrapped />
   </PuckProvider>
 );
-
-import { EncodeIR } from "./wasm/EncodeIR";
-EncodeIR("NECx1", 0, 191, 3).then(console.log);
 
 export const AppV2 = () => {
   const manufacturers = useIRDBData();
@@ -141,16 +139,29 @@ const Device: FC<{
             key={i}
             className="m-2 p-2 bg-gray-900 rounded shadow hover:text-pink-500 focus:text-pink-500 hover:bg-black focus:bg-black"
             type="button"
-            onClick={() => {
+            onClick={async () => {
               console.log("TODO: ", row);
 
               // D, S, F
-              EncodeIR(
+              const result: string = await EncodeIR(
                 row.protocol,
                 parseInt(row.device, 10),
                 parseInt(row.subdevice, 10),
                 parseInt(row.function, 10)
-              ).then(console.log);
+              );
+
+              // to millis
+              const times = result
+                .split(" ")
+                .map(parseFloat)
+                .map((v) => v / 1000)
+                .map((v) => v.toFixed(1));
+
+              // !!! 1c32 !!!
+
+              await Puck.write("LED3.set()\n");
+              await Puck.write(`Puck.IR([${times.join(",")}])\n`);
+              await Puck.write("LED3.reset()\n");
             }}
           >
             {row.functionname}
