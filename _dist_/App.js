@@ -1,15 +1,16 @@
-import React, {useEffect, useState} from "../web_modules/react.js";
-import {fetchIRDBDevice, useIRDBData} from "./irdb.js";
-import {EncodeIR as EncodeIR2} from "./wasm/EncodeIR.js";
+import React, {useEffect, useState} from "../_snowpack/pkg/react.js";
+import {fetchFunctions, useAsync, fetchIndex} from "./irdb.js";
+import {EncodeIR} from "./wasm/EncodeIR.js";
 const Puck = window.Puck;
+Puck.debug = 3;
 export const App = () => {
-  const manufacturers = useIRDBData();
+  const manufacturers = useAsync(fetchIndex, []) || {};
   const [manufacturer, setManufacturer] = useState();
   const changeManufacturer = (e) => setManufacturer(e.target.value);
   const types = manufacturers[manufacturer];
   const [type, setType] = useState();
   const changeType = (e) => setType(e.target.value);
-  const devices = types?.[type];
+  const devices = types && types[type];
   const submit = (e) => {
     e.preventDefault();
     console.log("submit");
@@ -63,7 +64,7 @@ export const App = () => {
     value: type
   }, /* @__PURE__ */ React.createElement("option", null), Object.keys(types).map((name) => /* @__PURE__ */ React.createElement("option", {
     key: name
-  }, name)))), /* @__PURE__ */ React.createElement("ul", null, devices?.map(([dev, subdev], i) => /* @__PURE__ */ React.createElement("li", {
+  }, name)))), /* @__PURE__ */ React.createElement("ul", null, devices && devices.map(([dev, subdev], i) => /* @__PURE__ */ React.createElement("li", {
     key: i
   }, /* @__PURE__ */ React.createElement("div", {
     className: "mx-2 mt-8 p-2 rounded text-right opacity-20"
@@ -77,20 +78,16 @@ export const App = () => {
   }))))));
 };
 const Device = ({manufacturer, devicetype, device, subdevice}) => {
-  const [butts, setButts] = useState();
-  useEffect(() => {
-    setButts([]);
-    fetchIRDBDevice(manufacturer, devicetype, device, subdevice).then(setButts);
-  }, [manufacturer, devicetype, device, subdevice]);
-  if (butts) {
+  const funtions = useAsync(() => fetchFunctions(manufacturer, devicetype, device, subdevice), [manufacturer, devicetype, device, subdevice]);
+  if (funtions) {
     return /* @__PURE__ */ React.createElement("nav", {
       className: "flex flex-wrap"
-    }, butts.map((row, i) => /* @__PURE__ */ React.createElement(Button, {
+    }, funtions.map((row, i) => /* @__PURE__ */ React.createElement(Button, {
       key: i,
       ...row
     })));
   } else {
-    return /* @__PURE__ */ React.createElement("p", null, "\u2013");
+    return /* @__PURE__ */ React.createElement("p", null, "–");
   }
 };
 let last = null;
@@ -103,7 +100,7 @@ const Button = (props) => {
       setActive(false);
       return;
     }
-    const result = await EncodeIR2(props.protocol, parseInt(props.device, 10), parseInt(props.subdevice, 10), parseInt(props.function, 10));
+    const result = await EncodeIR(props.protocol, parseInt(props.device, 10), parseInt(props.subdevice, 10), parseInt(props.function, 10));
     const millis = result.split(" ").map(parseFloat).map((v) => v / 1e3).map((v) => v.toFixed(1));
     await Puck.write(`    
     LED3.set();

@@ -1,30 +1,23 @@
-import {useEffect, useState} from "../web_modules/react.js";
-import Papa from "../web_modules/papaparse.js";
+import {useEffect, useState} from "../_snowpack/pkg/react.js";
+import Papa from "../_snowpack/pkg/papaparse.js";
 const ENDPOINT = "https://cdn.jsdelivr.net/gh/probonopd/irdb@master/codes/";
-const re = /^(?<manufacturer>.+)\/(?<devicetype>.+)\/(?<device>.+),(?<subdevice>.+)\.csv$/;
-const fetchIRDBIndex = async () => {
+const indexRE = /^(.+)\/(.+)\/(.+),(.+)\.csv$/;
+export const fetchIndex = async () => {
   const res = await fetch(ENDPOINT + "index");
   const text = await res.text();
-  const data = {};
+  const accumulate = {};
   for (const line of text.split("\n")) {
-    const match = line.match(re);
+    const match = line.match(indexRE);
     if (match) {
-      const device = match.groups;
-      const man = data[device.manufacturer] ||= {};
-      const dev = man[device.devicetype] ||= [];
-      dev.push([device.device, device.subdevice]);
+      const [, manufacturer, devicetype, device, subdevice] = match;
+      const man = accumulate[manufacturer] ||= {};
+      const dev = man[devicetype] ||= [];
+      dev.push([device, subdevice]);
     }
   }
-  return data;
+  return accumulate;
 };
-export const useIRDBData = () => {
-  const [data, setData] = useState({});
-  useEffect(() => {
-    fetchIRDBIndex().then(setData);
-  }, []);
-  return data;
-};
-export const fetchIRDBDevice = async (manufacturer, devicetype, device, subdevice) => {
+export const fetchFunctions = async (manufacturer, devicetype, device, subdevice) => {
   const path = `${ENDPOINT}${manufacturer}/${devicetype}/${device},${subdevice}.csv`;
   return new Promise((resolve) => {
     Papa.parse(path, {
@@ -37,3 +30,13 @@ export const fetchIRDBDevice = async (manufacturer, devicetype, device, subdevic
     });
   });
 };
+export function useAsync(fn, deps = []) {
+  const [state, setState] = useState(null);
+  useEffect(() => {
+    setState(null);
+    let live = true;
+    fn().then((v) => live && setState(v));
+    return () => void (live = false);
+  }, deps);
+  return state;
+}

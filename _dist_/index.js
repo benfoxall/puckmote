@@ -1,4 +1,4 @@
-import React from "../web_modules/react.js";
-import {render} from "../web_modules/react-dom.js";
-import {App as App2} from "./App.js";
-render(/* @__PURE__ */ React.createElement(App2, null), document.querySelector("#root"));
+import React from "../_snowpack/pkg/react.js";
+import {render} from "../_snowpack/pkg/react-dom.js";
+import {App} from "./App.js";
+render(/* @__PURE__ */ React.createElement(App, null), document.querySelector("#root"));
