@@ -1,8 +1,9 @@
 import {useEffect, useState} from "../web_modules/react.js";
-const ENDPOINT = "https://cdn.jsdelivr.net/gh/probonopd/irdb@master/codes/index";
+import Papa from "../web_modules/papaparse.js";
+const ENDPOINT = "https://cdn.jsdelivr.net/gh/probonopd/irdb@master/codes/";
 const re = /^(?<manufacturer>.+)\/(?<devicetype>.+)\/(?<device>.+),(?<subdevice>.+)\.csv$/;
-const fetchIRDBData = async () => {
-  const res = await fetch(ENDPOINT);
+const fetchIRDBIndex = async () => {
+  const res = await fetch(ENDPOINT + "index");
   const text = await res.text();
   const data = {};
   for (const line of text.split("\n")) {
@@ -19,7 +20,20 @@ const fetchIRDBData = async () => {
 export const useIRDBData = () => {
   const [data, setData] = useState({});
   useEffect(() => {
-    fetchIRDBData().then(setData);
+    fetchIRDBIndex().then(setData);
   }, []);
   return data;
+};
+export const fetchIRDBDevice = async (manufacturer, devicetype, device, subdevice) => {
+  const path = `${ENDPOINT}${manufacturer}/${devicetype}/${device},${subdevice}.csv`;
+  return new Promise((resolve) => {
+    Papa.parse(path, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete(result) {
+        resolve(result.data);
+      }
+    });
+  });
 };
