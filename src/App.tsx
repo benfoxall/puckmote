@@ -58,16 +58,15 @@ export const App = () => {
     <form className="m-5 font-mono" onSubmit={submit}>
       <h1 className="text-4xl">Puckmote </h1>
       <p>
-        Universal IR control for{" "}
-        <a
+        Use an <a
           className="text-blue-500 hover:underline"
           href="https://www.espruino.com/"
         >
           Espruino
-        </a>
+        </a> as a IR control
       </p>
       <p>
-        With codes from{" "}
+        with codes from{" "}
         <a
           className="text-blue-500 hover:underline"
           href="https://github.com/probonopd/irdb"
