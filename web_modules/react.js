@@ -4,8 +4,6 @@ export { r as default } from './common/index-d0e3fe20.js';
 
 
 
-var useCallback = react.useCallback;
-var useContext = react.useContext;
 var useEffect = react.useEffect;
 var useState = react.useState;
-export { useCallback, useContext, useEffect, useState };
+export { useEffect, useState };

@@ -1,41 +1,8 @@
 import React, {useEffect, useState} from "../web_modules/react.js";
-import {PuckProvider, PuckStatus, usePuckRepl} from "./react-puck.js";
-import {SamsungTV} from "./data.js";
 import {fetchIRDBDevice, useIRDBData} from "./irdb.js";
-import {pronto as pronto2} from "./lib/pronto.js";
-const Wrapped = () => {
-  const repl = usePuckRepl();
-  const run = (prontoHex) => {
-    const times = pronto2(prontoHex);
-    repl(`
-      LED2.set();
-    `);
-    repl(`
-        Puck.IR([${times.join(", ")}]);
-
-        setTimeout(() => LED2.reset(), 100)
-    `);
-  };
-  return /* @__PURE__ */ React.createElement("div", {
-    className: "container mx-auto max-w-md p-8 m-8 bg-gray-200 text-black shadow-2xl rounded"
-  }, /* @__PURE__ */ React.createElement("div", {
-    className: "m-4"
-  }, /* @__PURE__ */ React.createElement(PuckStatus, null)), /* @__PURE__ */ React.createElement("h1", {
-    className: "text-4xl m-4"
-  }, "Puckmote"), /* @__PURE__ */ React.createElement("h1", {
-    className: "text-2xl m-4"
-  }, "Samsung"), /* @__PURE__ */ React.createElement("div", {
-    className: "flex flex-wrap m-2 max-w-4xl"
-  }, Object.entries(SamsungTV).map(([name, prontoHex]) => /* @__PURE__ */ React.createElement("button", {
-    key: name,
-    onClick: () => run(prontoHex),
-    className: "flex whitespace-nowrap items-center justify-center rounded bg-green-300 p-4 m-1 h-6 hover:bg-green-700 focus:bg-green-700 transition-all text-l font-bold"
-  }, name))));
-};
-export const AppV1 = () => /* @__PURE__ */ React.createElement(PuckProvider, null, /* @__PURE__ */ React.createElement(Wrapped, null));
 import {EncodeIR as EncodeIR2} from "./wasm/EncodeIR.js";
-EncodeIR2("NECx1", 0, 191, 3).then(console.log);
-export const AppV2 = () => {
+const Puck = window.Puck;
+export const App = () => {
   const manufacturers = useIRDBData();
   const [manufacturer, setManufacturer] = useState();
   const changeManufacturer = (e) => setManufacturer(e.target.value);
@@ -86,17 +53,29 @@ const Device = ({manufacturer, devicetype, device, subdevice}) => {
   if (butts) {
     return /* @__PURE__ */ React.createElement("nav", {
       className: "flex flex-wrap"
-    }, butts.map((row, i) => /* @__PURE__ */ React.createElement("button", {
+    }, butts.map((row, i) => /* @__PURE__ */ React.createElement(Button, {
       key: i,
-      className: "m-2 p-2 bg-gray-900 rounded shadow hover:text-pink-500 focus:text-pink-500 hover:bg-black focus:bg-black",
-      type: "button",
-      onClick: () => {
-        console.log("TODO: ", row);
-        EncodeIR2(row.protocol, parseInt(row.device, 10), parseInt(row.subdevice, 10), parseInt(row.function, 10)).then(console.log);
-      }
-    }, row.functionname)));
+      ...row
+    })));
   } else {
     return /* @__PURE__ */ React.createElement("p", null, "data");
   }
 };
-export const App = AppV2;
+const Button = (props) => {
+  const [active, setActive] = useState(false);
+  const click = async () => {
+    setActive(true);
+    const result = await EncodeIR2(props.protocol, parseInt(props.device, 10), parseInt(props.subdevice, 10), parseInt(props.function, 10));
+    const millis = result.split(" ").map(parseFloat).map((v) => v / 1e3).map((v) => v.toFixed(1));
+    await Puck.write("LED3.set()\n");
+    await Puck.write(`Puck.IR([${millis.join(",")}])
+`);
+    await Puck.write("LED3.reset()\n");
+    setActive(false);
+  };
+  return /* @__PURE__ */ React.createElement("button", {
+    className: "m-2 p-2 rounded shadow transition-colors " + (active ? "bg-blue-500" : "bg-gray-900 hover:bg-black focus:bg-black focus:text-pink-500 hover:text-pink-500 focus:text-pink-500"),
+    type: "button",
+    onClick: click
+  }, props.functionname);
+};
