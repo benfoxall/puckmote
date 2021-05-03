@@ -1529,10 +1529,12 @@ function createExportWrapper(name, fixedasm) {
   };
 }
 
-var wasmBinaryFile = 'EncodeIR.wasm';
-if (!isDataURI(wasmBinaryFile)) {
-  wasmBinaryFile = locateFile(wasmBinaryFile);
-}
+// use import
+import wasmBinaryFile from './EncodeIR.wasm'
+// var wasmBinaryFile = 'EncodeIR.wasm';
+// if (!isDataURI(wasmBinaryFile)) {
+//   wasmBinaryFile = locateFile(wasmBinaryFile);
+// }
 
 function getBinary(file) {
   try {
