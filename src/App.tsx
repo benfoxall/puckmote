@@ -153,11 +153,21 @@ const Device: FC<{
   }
 };
 
+let last: CSVRow = null;
+
 const Button: FC<CSVRow> = (props) => {
   const [active, setActive] = useState(false);
 
   const click = async () => {
     setActive(true);
+
+    if (last === props) {
+      await Puck.write(
+        "repeat();\nLED2.set();setTimeout(() => LED2.reset(), 500)\n"
+      );
+      setActive(false);
+      return;
+    }
 
     const result: string = await EncodeIR(
       props.protocol,
@@ -172,9 +182,16 @@ const Button: FC<CSVRow> = (props) => {
       .map((v) => v / 1000)
       .map((v) => v.toFixed(1));
 
-    await Puck.write("LED3.set()\n");
-    await Puck.write(`Puck.IR([${millis.join(",")}])\n`);
-    await Puck.write("LED3.reset()\n");
+    await Puck.write(`    
+    LED3.set();
+    function repeat() {
+      Puck.IR([${millis.join(",")}])
+    };
+    repeat();
+    LED3.reset();
+    `);
+
+    last = props;
 
     setActive(false);
   };
