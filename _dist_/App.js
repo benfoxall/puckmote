@@ -93,16 +93,27 @@ const Device = ({manufacturer, devicetype, device, subdevice}) => {
     return /* @__PURE__ */ React.createElement("p", null, "\u2013");
   }
 };
+let last = null;
 const Button = (props) => {
   const [active, setActive] = useState(false);
   const click = async () => {
     setActive(true);
+    if (last === props) {
+      await Puck.write("repeat();\nLED2.set();setTimeout(() => LED2.reset(), 500)\n");
+      setActive(false);
+      return;
+    }
     const result = await EncodeIR2(props.protocol, parseInt(props.device, 10), parseInt(props.subdevice, 10), parseInt(props.function, 10));
     const millis = result.split(" ").map(parseFloat).map((v) => v / 1e3).map((v) => v.toFixed(1));
-    await Puck.write("LED3.set()\n");
-    await Puck.write(`Puck.IR([${millis.join(",")}])
-`);
-    await Puck.write("LED3.reset()\n");
+    await Puck.write(`    
+    LED3.set();
+    function repeat() {
+      Puck.IR([${millis.join(",")}])
+    };
+    repeat();
+    LED3.reset();
+    `);
+    last = props;
     setActive(false);
   };
   return /* @__PURE__ */ React.createElement("button", {
