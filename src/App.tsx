@@ -25,30 +25,56 @@ export const App = () => {
 
   return (
     <form className="m-5 font-mono" onSubmit={submit}>
-      <select
-        className="bg-gray-800 m-2 p-2 rounded"
-        onChange={changeManufacturer}
-        name="m"
-        value={manufacturer}
-      >
-        <option>…</option>
-        {Object.keys(manufacturers).map((name) => (
-          <option key={name}>{name}</option>
-        ))}
-      </select>
-
-      {types && (
-        <select
-          className="bg-gray-800 m-2 p-2 rounded block"
-          onChange={changeType}
-          name="t"
-          value={type}
+      <h1 className="text-4xl">Puckmote </h1>
+      <p>
+        Universal IR control for{" "}
+        <a
+          className="text-blue-500 hover:underline"
+          href="https://www.espruino.com/"
         >
-          <option>…</option>
-          {Object.keys(types).map((name) => (
+          Espruino
+        </a>
+      </p>
+      <p>
+        Using data from{" "}
+        <a
+          className="text-blue-500 hover:underline"
+          href="https://github.com/probonopd/irdb"
+        >
+          irdb
+        </a>
+      </p>
+
+      <label className="my-5 block">
+        <div>Manufacturer</div>
+        <select
+          className="dark:bg-gray-800 p-2 rounded"
+          onChange={changeManufacturer}
+          name="m"
+          value={manufacturer}
+        >
+          <option></option>
+          {Object.keys(manufacturers).map((name) => (
             <option key={name}>{name}</option>
           ))}
         </select>
+      </label>
+
+      {types && (
+        <label className="my-5 block">
+          <div>Device Type</div>
+          <select
+            className="dark:bg-gray-800 p-2 rounded block"
+            onChange={changeType}
+            name="t"
+            value={type}
+          >
+            <option></option>
+            {Object.keys(types).map((name) => (
+              <option key={name}>{name}</option>
+            ))}
+          </select>
+        </label>
       )}
 
       <ul>
@@ -57,7 +83,7 @@ export const App = () => {
             <div className="mx-2 mt-8 p-2 rounded text-right opacity-20">
               {dev} | {subdev}
             </div>
-            <div className="bg-gray-800 p-2 rounded">
+            <div className="dark:bg-gray-800 bg-white p-2 rounded">
               <Device
                 manufacturer={manufacturer}
                 devicetype={type}
@@ -94,7 +120,7 @@ const Device: FC<{
       </nav>
     );
   } else {
-    return <p>data</p>;
+    return <p>–</p>;
   }
 };
 
@@ -127,7 +153,7 @@ const Button: FC<CSVRow> = (props) => {
   return (
     <button
       className={
-        "m-2 p-2 rounded shadow transition-colors " +
+        "m-2 p-2 text-white rounded shadow transition-colors " +
         (active
           ? "bg-blue-500"
           : "bg-gray-900 hover:bg-black focus:bg-black focus:text-pink-500 hover:text-pink-500 focus:text-pink-500")
