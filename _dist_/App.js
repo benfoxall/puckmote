@@ -40,10 +40,10 @@ export const App = () => {
     onSubmit: submit
   }, /* @__PURE__ */ React.createElement("h1", {
     className: "text-4xl"
-  }, "Puckmote "), /* @__PURE__ */ React.createElement("p", null, "Universal IR control for", " ", /* @__PURE__ */ React.createElement("a", {
+  }, "Puckmote "), /* @__PURE__ */ React.createElement("p", null, "Use an ", /* @__PURE__ */ React.createElement("a", {
     className: "text-blue-500 hover:underline",
     href: "https://www.espruino.com/"
-  }, "Espruino")), /* @__PURE__ */ React.createElement("p", null, "With codes from", " ", /* @__PURE__ */ React.createElement("a", {
+  }, "Espruino"), " as a IR control"), /* @__PURE__ */ React.createElement("p", null, "with codes from", " ", /* @__PURE__ */ React.createElement("a", {
     className: "text-blue-500 hover:underline",
     href: "https://github.com/probonopd/irdb"
   }, "irdb")), /* @__PURE__ */ React.createElement("label", {
