@@ -6,6 +6,8 @@ import { CSVRow, fetchIRDBDevice, useIRDBData } from "./irdb";
 import { pronto } from "./lib/pronto";
 import { EncodeIR } from "./wasm/EncodeIR";
 
+const Puck = (window as any).Puck;
+
 const Wrapped = () => {
   const repl = usePuckRepl();
 
@@ -135,43 +137,55 @@ const Device: FC<{
     return (
       <nav className="flex flex-wrap">
         {butts.map((row, i) => (
-          <button
-            key={i}
-            className="m-2 p-2 bg-gray-900 rounded shadow hover:text-pink-500 focus:text-pink-500 hover:bg-black focus:bg-black"
-            type="button"
-            onClick={async () => {
-              console.log("TODO: ", row);
-
-              // D, S, F
-              const result: string = await EncodeIR(
-                row.protocol,
-                parseInt(row.device, 10),
-                parseInt(row.subdevice, 10),
-                parseInt(row.function, 10)
-              );
-
-              // to millis
-              const times = result
-                .split(" ")
-                .map(parseFloat)
-                .map((v) => v / 1000)
-                .map((v) => v.toFixed(1));
-
-              // !!! 1c32 !!!
-
-              await Puck.write("LED3.set()\n");
-              await Puck.write(`Puck.IR([${times.join(",")}])\n`);
-              await Puck.write("LED3.reset()\n");
-            }}
-          >
-            {row.functionname}
-          </button>
+          <Button key={i} {...row} />
         ))}
       </nav>
     );
   } else {
     return <p>data</p>;
   }
+};
+
+const Button: FC<CSVRow> = (props) => {
+  const [active, setActive] = useState(false);
+
+  const click = async () => {
+    setActive(true);
+
+    const result: string = await EncodeIR(
+      props.protocol,
+      parseInt(props.device, 10),
+      parseInt(props.subdevice, 10),
+      parseInt(props.function, 10)
+    );
+
+    const millis = result
+      .split(" ")
+      .map(parseFloat)
+      .map((v) => v / 1000)
+      .map((v) => v.toFixed(1));
+
+    await Puck.write("LED3.set()\n");
+    await Puck.write(`Puck.IR([${millis.join(",")}])\n`);
+    await Puck.write("LED3.reset()\n");
+
+    setActive(false);
+  };
+
+  return (
+    <button
+      className={
+        "m-2 p-2 rounded shadow transition-colors " +
+        (active
+          ? "bg-blue-500"
+          : "bg-gray-900 hover:bg-black focus:bg-black focus:text-pink-500 hover:text-pink-500 focus:text-pink-500")
+      }
+      type="button"
+      onClick={click}
+    >
+      {props.functionname}
+    </button>
+  );
 };
 
 export const App = AppV2;
