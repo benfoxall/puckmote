@@ -1,121 +1,17 @@
-import React, {useEffect, useState} from "../_snowpack/pkg/react.js";
-import {fetchFunctions, useAsync, fetchIndex} from "./irdb.js";
-import {EncodeIR} from "./wasm/EncodeIR.js";
-const Puck = window.Puck;
-Puck.debug = 3;
+import React, {useState} from "../_snowpack/pkg/react.js";
+import {Device} from "./components/Device.js";
+import {Choose} from "./components/Choose.js";
+import {Title} from "./components/Title.js";
 export const App = () => {
-  const manufacturers = useAsync(fetchIndex, []) || {};
-  const [manufacturer, setManufacturer] = useState();
-  const changeManufacturer = (e) => setManufacturer(e.target.value);
-  const types = manufacturers[manufacturer];
-  const [type, setType] = useState();
-  const changeType = (e) => setType(e.target.value);
-  const devices = types && types[type];
-  const submit = (e) => {
-    e.preventDefault();
-    console.log("submit");
-  };
-  useEffect(() => {
-    const current = new URLSearchParams(location.search);
-    if (current.has("m")) {
-      setManufacturer(current.get("m"));
-    }
-    if (current.has("t")) {
-      setType(current.get("t"));
-    }
-  }, []);
-  useEffect(() => {
-    let params = new URLSearchParams();
-    if (manufacturer) {
-      params.set("m", manufacturer);
-    }
-    if (type) {
-      params.set("t", type);
-    }
-    const q = params.toString();
-    history.pushState({manufacturer, type}, `${manufacturer} / ${type}`, q.length ? `?${q}` : ".");
-  }, [manufacturer, type]);
-  return /* @__PURE__ */ React.createElement("form", {
-    className: "m-5 font-mono",
-    onSubmit: submit
-  }, /* @__PURE__ */ React.createElement("h1", {
-    className: "text-4xl"
-  }, "Puckmote "), /* @__PURE__ */ React.createElement("p", null, "Use an ", /* @__PURE__ */ React.createElement("a", {
-    className: "text-blue-500 hover:underline",
-    href: "https://www.espruino.com/"
-  }, "Espruino"), " as a IR control"), /* @__PURE__ */ React.createElement("p", null, "with codes from", " ", /* @__PURE__ */ React.createElement("a", {
-    className: "text-blue-500 hover:underline",
-    href: "https://github.com/probonopd/irdb"
-  }, "irdb")), /* @__PURE__ */ React.createElement("label", {
-    className: "my-5 block"
-  }, /* @__PURE__ */ React.createElement("div", null, "Manufacturer"), /* @__PURE__ */ React.createElement("select", {
-    className: "dark:bg-gray-800 p-2 rounded",
-    onChange: changeManufacturer,
-    name: "m",
-    value: manufacturer
-  }, /* @__PURE__ */ React.createElement("option", null), Object.keys(manufacturers).map((name) => /* @__PURE__ */ React.createElement("option", {
-    key: name
-  }, name)))), types && /* @__PURE__ */ React.createElement("label", {
-    className: "my-5 block"
-  }, /* @__PURE__ */ React.createElement("div", null, "Device Type"), /* @__PURE__ */ React.createElement("select", {
-    className: "dark:bg-gray-800 p-2 rounded block",
-    onChange: changeType,
-    name: "t",
-    value: type
-  }, /* @__PURE__ */ React.createElement("option", null), Object.keys(types).map((name) => /* @__PURE__ */ React.createElement("option", {
-    key: name
-  }, name)))), /* @__PURE__ */ React.createElement("ul", null, devices && devices.map(([dev, subdev], i) => /* @__PURE__ */ React.createElement("li", {
-    key: i
+  const [deviceList, setDeviceList] = useState([]);
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "m-5 font-mono max-w-5xl"
   }, /* @__PURE__ */ React.createElement("div", {
-    className: "mx-2 mt-8 p-2 rounded text-right opacity-20"
-  }, dev, " | ", subdev), /* @__PURE__ */ React.createElement("div", {
-    className: "dark:bg-gray-800 bg-white p-2 rounded"
-  }, /* @__PURE__ */ React.createElement(Device, {
-    manufacturer,
-    devicetype: type,
-    device: dev,
-    subdevice: subdev
-  }))))));
-};
-const Device = ({manufacturer, devicetype, device, subdevice}) => {
-  const funtions = useAsync(() => fetchFunctions(manufacturer, devicetype, device, subdevice), [manufacturer, devicetype, device, subdevice]);
-  if (funtions) {
-    return /* @__PURE__ */ React.createElement("nav", {
-      className: "flex flex-wrap"
-    }, funtions.map((row, i) => /* @__PURE__ */ React.createElement(Button, {
-      key: i,
-      ...row
-    })));
-  } else {
-    return /* @__PURE__ */ React.createElement("p", null, "–");
-  }
-};
-let last = null;
-const Button = (props) => {
-  const [active, setActive] = useState(false);
-  const click = async () => {
-    setActive(true);
-    if (last === props) {
-      await Puck.write("repeat();\nLED2.set();setTimeout(() => LED2.reset(), 500)\n");
-      setActive(false);
-      return;
-    }
-    const result = await EncodeIR(props.protocol, parseInt(props.device, 10), parseInt(props.subdevice, 10), parseInt(props.function, 10));
-    const millis = result.split(" ").map(parseFloat).map((v) => v / 1e3).map((v) => v.toFixed(1));
-    await Puck.write(`    
-    LED3.set();
-    function repeat() {
-      Puck.IR([${millis.join(",")}])
-    };
-    repeat();
-    LED3.reset();
-    `);
-    last = props;
-    setActive(false);
-  };
-  return /* @__PURE__ */ React.createElement("button", {
-    className: "m-2 p-2 text-white rounded shadow transition-colors " + (active ? "bg-blue-500" : "bg-gray-900 hover:bg-black focus:bg-black focus:text-pink-500 hover:text-pink-500 focus:text-pink-500"),
-    type: "button",
-    onClick: click
-  }, props.functionname);
+    className: "flex flex-col md:flex-row gap-8"
+  }, /* @__PURE__ */ React.createElement(Title, null), /* @__PURE__ */ React.createElement(Choose, {
+    onChoose: setDeviceList
+  })), deviceList.map((path) => /* @__PURE__ */ React.createElement(Device, {
+    key: path,
+    path
+  })));
 };

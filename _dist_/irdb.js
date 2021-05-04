@@ -9,18 +9,18 @@ export const fetchIndex = async () => {
   for (const line of text.split("\n")) {
     const match = line.match(indexRE);
     if (match) {
-      const [, manufacturer, devicetype, device, subdevice] = match;
+      const [row, manufacturer, devicetype, device, subdevice] = match;
       const man = accumulate[manufacturer] ||= {};
       const dev = man[devicetype] ||= [];
-      dev.push([device, subdevice]);
+      dev.push(row);
     }
   }
   return accumulate;
 };
-export const fetchFunctions = async (manufacturer, devicetype, device, subdevice) => {
-  const path = `${ENDPOINT}${manufacturer}/${devicetype}/${device},${subdevice}.csv`;
+export const fetchDevice = async (path) => {
+  const url = `${ENDPOINT}${path}`;
   return new Promise((resolve) => {
-    Papa.parse(path, {
+    Papa.parse(url, {
       download: true,
       header: true,
       skipEmptyLines: true,
