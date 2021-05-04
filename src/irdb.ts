@@ -7,7 +7,7 @@ const indexRE = /^(.+)\/(.+)\/(.+),(.+)\.csv$/;
 
 interface IIndex {
   [manufacturer: string]: {
-    [devicetype: string]: [device: string, subdevice: string][];
+    [devicetype: string]: string[];
   };
 }
 
@@ -28,27 +28,22 @@ export const fetchIndex = async () => {
   for (const line of text.split("\n")) {
     const match = line.match(indexRE);
     if (match) {
-      const [, manufacturer, devicetype, device, subdevice] = match;
+      const [row, manufacturer, devicetype, device, subdevice] = match;
 
       const man = (accumulate[manufacturer] ||= {});
       const dev = (man[devicetype] ||= []);
-      dev.push([device, subdevice]);
+      dev.push(row);
     }
   }
 
   return accumulate;
 };
 
-export const fetchFunctions = async (
-  manufacturer: string,
-  devicetype: string,
-  device: string,
-  subdevice: string
-): Promise<IFunction[]> => {
-  const path = `${ENDPOINT}${manufacturer}/${devicetype}/${device},${subdevice}.csv`;
+export const fetchFunctions = async (path: string): Promise<IFunction[]> => {
+  const url = `${ENDPOINT}${path}`;
 
   return new Promise((resolve) => {
-    Papa.parse<IFunction>(path, {
+    Papa.parse<IFunction>(url, {
       download: true,
       header: true,
       skipEmptyLines: true,
