@@ -1,7 +1,8 @@
-import React, { ChangeEventHandler, FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import { FindDevices } from "./components/FindDevices";
+import { Title } from "./components/Title";
 
-import { IFunction, fetchFunctions, useAsync, fetchIndex } from "./irdb";
+import { IFunction, fetchFunctions, useAsync } from "./irdb";
 import { EncodeIR } from "./wasm/EncodeIR";
 
 const Puck = (window as any).Puck;
@@ -11,29 +12,13 @@ export const App = () => {
   const [deviceList, setDeviceList] = useState<string[]>([]);
 
   return (
-    <div className="m-5 font-mono">
-      <h1 className="text-4xl">Puckmote </h1>
-      <p>
-        Use an{" "}
-        <a
-          className="text-blue-500 hover:underline"
-          href="https://www.espruino.com/"
-        >
-          Espruino
-        </a>{" "}
-        as a IR control
-      </p>
-      <p>
-        with codes from{" "}
-        <a
-          className="text-blue-500 hover:underline"
-          href="https://github.com/probonopd/irdb"
-        >
-          irdb
-        </a>
-      </p>
+    <div className="m-5 font-mono max-w-5xl">
+      <div className="grid md:grid-flow-col gap-8">
+        <Title />
+        <FindDevices setDevices={setDeviceList} />
+      </div>
 
-      <FindDevices setDevices={setDeviceList} />
+      <hr className="my-5" />
 
       <ul>
         {deviceList.map((path) => (

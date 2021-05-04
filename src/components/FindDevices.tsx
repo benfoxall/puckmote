@@ -62,7 +62,7 @@ export const FindDevices: FC<Props> = ({ setDevices }) => {
 
   return (
     <form className="flex space-x-4" onSubmit={submit}>
-      <label className="my-5 block">
+      <label className="block">
         <div>Manufacturer</div>
         <select
           className="dark:bg-gray-800 p-2 rounded"
@@ -78,7 +78,7 @@ export const FindDevices: FC<Props> = ({ setDevices }) => {
       </label>
 
       {types && (
-        <label className="my-5 block">
+        <label className="block">
           <div>Device Type</div>
           <select
             className="dark:bg-gray-800 p-2 rounded block"
