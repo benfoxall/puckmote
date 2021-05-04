@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Device } from "./components/Device";
-import { FindDevices } from "./components/FindDevices";
+import { Choose } from "./components/Choose";
 import { Title } from "./components/Title";
 
 export const App = () => {
@@ -8,12 +8,10 @@ export const App = () => {
 
   return (
     <div className="m-5 font-mono max-w-5xl">
-      <div className="grid md:grid-flow-col gap-8">
+      <div className="flex flex-col md:flex-row gap-8">
         <Title />
-        <FindDevices setDevices={setDeviceList} />
+        <Choose onChoose={setDeviceList} />
       </div>
-
-      <hr className="my-5" />
 
       {deviceList.map((path) => (
         <Device key={path} path={path} />

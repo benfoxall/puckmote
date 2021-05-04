@@ -3,10 +3,10 @@ import React, { ChangeEventHandler, FC, useEffect, useState } from "react";
 import { useAsync, fetchIndex } from "../irdb";
 
 interface Props {
-  setDevices: (devices: string[]) => void;
+  onChoose: (devices: string[]) => void;
 }
 
-export const FindDevices: FC<Props> = ({ setDevices }) => {
+export const Choose: FC<Props> = ({ onChoose: setDevices }) => {
   const manufacturers = useAsync(fetchIndex, []) || {};
 
   const [manufacturer, setManufacturer] = useState<string>();
@@ -58,7 +58,7 @@ export const FindDevices: FC<Props> = ({ setDevices }) => {
   }, [manufacturer, type]);
 
   return (
-    <form className="flex space-x-4" onSubmit={submit}>
+    <form className="flex flex-col md:flex-row gap-8" onSubmit={submit}>
       <label className="block">
         <div>Manufacturer</div>
         <select
