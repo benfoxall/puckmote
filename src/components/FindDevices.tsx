@@ -1,9 +1,6 @@
 import React, { ChangeEventHandler, FC, useEffect, useState } from "react";
 
-import { IFunction, fetchFunctions, useAsync, fetchIndex } from "../irdb";
-
-const Puck = (window as any).Puck;
-Puck.debug = 3;
+import { useAsync, fetchIndex } from "../irdb";
 
 interface Props {
   setDevices: (devices: string[]) => void;

@@ -39,7 +39,7 @@ export const fetchIndex = async () => {
   return accumulate;
 };
 
-export const fetchFunctions = async (path: string): Promise<IFunction[]> => {
+export const fetchDevice = async (path: string): Promise<IFunction[]> => {
   const url = `${ENDPOINT}${path}`;
 
   return new Promise((resolve) => {
