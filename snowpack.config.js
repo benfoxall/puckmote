@@ -12,13 +12,7 @@ module.exports = {
     "@snowpack/plugin-typescript",
     "@snowpack/plugin-postcss",
     ["@snowpack/plugin-webpack", {
-      // outputPattern: 'xyz.bundle.js',
-      // htmlMinifierOptions: false,
-      // extendConfig(config) {
-      //   config.output.publicPath = '/xyz/blah/'
-
-      //   return config
-      // }
+      htmlMinifierOptions: false,
     }]
   ],
 };
