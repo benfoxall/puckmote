@@ -4,7 +4,7 @@
   "description": "A remote control for my TV",
   "scripts": {
     "start": "snowpack dev",
-    "build": "snowpack build && workbox generateSW workbox-config.js"
+    "build": "NODE_OPTIONS=--openssl-legacy-provider snowpack build && workbox generateSW workbox-config.js"
   },
   "repository": {
     "type": "git",
